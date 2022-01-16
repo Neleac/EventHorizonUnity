@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Inputs;
 using Photon.Pun;
 using Photon.Realtime;
@@ -16,19 +17,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // connect to server
         if (!PhotonNetwork.IsConnected)
             PhotonNetwork.ConnectUsingSettings();
-    }
-
-    public override void OnConnectedToMaster()
-    {
-        // current behavior: join random room, if none available create new room
-        PhotonNetwork.JoinRandomRoom();
-    }
-
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 2;
-        PhotonNetwork.CreateRoom(null, roomOptions, null);
     }
 
     public void OnCharacterSelect(int whichCharacter)
@@ -58,6 +46,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // enable movement
         cameraRig.GetComponent<CharacterController>().enabled = true;
         cameraRig.GetComponent<InputActionManager>().enabled = true;
+
+        // disable start menu interactions
+        GameObject.Find("OVRCameraRig/TrackingSpace/RightHandAnchor").GetComponent<XRController>().enabled = false;
+        GameObject.Find("OVRCameraRig/TrackingSpace/RightHandAnchor").GetComponent<XRRayInteractor>().enabled = false;
     }
 
     public override void OnPlayerLeftRoom(Player player)
